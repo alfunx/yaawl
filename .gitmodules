@@ -1,0 +1,6 @@
+[submodule "utils/json-lua"]
+	path = util/json-lua
+	url = git@github.com:rxi/json.lua
+[submodule "utils/inspect-lua"]
+	path = util/inspect-lua
+	url = git@github.com:kikito/inspect.lua
