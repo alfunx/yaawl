@@ -10,6 +10,7 @@
 
 local awful = require("awful")
 local gears = require("gears")
+
 local file = require("yaawl.util.file")
 
 local function factory(args)

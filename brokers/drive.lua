@@ -9,11 +9,13 @@
 
 --]]
 
+local math = math
+
 local awful = require("awful")
 local gears = require("gears")
 local naughty = require("naughty")
+
 local gio = require("lgi").Gio
-local math = math
 
 local query_size = gio.FILE_ATTRIBUTE_FILESYSTEM_SIZE
 local query_free = gio.FILE_ATTRIBUTE_FILESYSTEM_FREE
