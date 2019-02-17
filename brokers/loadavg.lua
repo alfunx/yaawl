@@ -43,9 +43,11 @@ local function factory(args)
             screen = preset.screen or awful.screen.focused(),
             title = preset.title or notification_title,
             timeout = preset.timeout or notification_timeout,
-            text = string.format(" 1min: %.2f\n", x.load_1 )
-                .. string.format(" 5min: %.2f\n", x.load_5 )
-                .. string.format("15min: %.2f"  , x.load_15),
+            text = table.concat {
+                string.format(" 1min: %.2f\n", x.load_1 ),
+                string.format(" 5min: %.2f\n", x.load_5 ),
+                string.format("15min: %.2f"  , x.load_15),
+            },
         }
     end)
 

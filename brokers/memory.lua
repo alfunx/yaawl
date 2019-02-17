@@ -54,14 +54,16 @@ local function factory(args)
             screen = preset.screen or awful.screen.focused(),
             title = preset.title or notification_title,
             timeout = preset.timeout or notification_timeout,
-            text = string.format("Total:  %.2fGB\n", x.total / 1024 + 0.5)
-                .. string.format("Used:   %.2fGB\n", x.used  / 1024 + 0.5)
-                .. string.format("Free:   %.2fGB\n", x.free  / 1024 + 0.5)
-                .. string.format("Buffer: %.2fGB\n", x.buf   / 1024 + 0.5)
-                .. string.format("Cache:  %.2fGB\n", x.cache / 1024 + 0.5)
-                .. string.format("Swap:   %.2fGB\n", x.swap  / 1024 + 0.5)
-                .. string.format("Swapf:  %.2fGB\n", x.swapf / 1024 + 0.5)
-                .. string.format("Srec:   %.2fGB"  , x.srec  / 1024 + 0.5),
+            text = table.concat {
+                string.format("Total:  %.2fGB\n", x.total / 1024 + 0.5),
+                string.format("Used:   %.2fGB\n", x.used  / 1024 + 0.5),
+                string.format("Free:   %.2fGB\n", x.free  / 1024 + 0.5),
+                string.format("Buffer: %.2fGB\n", x.buf   / 1024 + 0.5),
+                string.format("Cache:  %.2fGB\n", x.cache / 1024 + 0.5),
+                string.format("Swap:   %.2fGB\n", x.swap  / 1024 + 0.5),
+                string.format("Swapf:  %.2fGB\n", x.swapf / 1024 + 0.5),
+                string.format("Srec:   %.2fGB"  , x.srec  / 1024 + 0.5),
+            },
         }
     end)
 

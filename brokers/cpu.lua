@@ -68,11 +68,11 @@ local function factory(args)
     end
 
     local function _notification_text(core)
-        local text = ""
+        local lines = { }
         for i, c in ipairs(core) do
-            text = text .. string.format("Core %d: %d%%\n", i, c.percent)
+            table.insert(lines, string.format("Core %d: %d%%", i, c.percent))
         end
-        return text
+        return table.concat(lines, '\n'):gsub('[\r\n%s]*$', '')
     end
 
     broker:add_callback(function(x)
@@ -84,7 +84,7 @@ local function factory(args)
             screen = preset.screen or awful.screen.focused(),
             title = preset.title or notification_title,
             timeout = preset.timeout or notification_timeout,
-            text = _notification_text(x.core):gsub('[\r\n%s]*$', ''),
+            text = _notification_text(x.core),
         }
     end)
 

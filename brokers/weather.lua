@@ -118,15 +118,17 @@ local function factory(args)
             screen = preset.screen or awful.screen.focused(),
             title = preset.title or notification_title,
             timeout = preset.timeout or notification_timeout,
-            text = string.format("%s <i>(%s)</i>\n\n", x.data.weather[1].main, x.data.weather[1].description)
-                .. string.format("Temperature: %s%s\n", x.data.main.temp, unit)
-                .. string.format("Range:       %s - %s%s\n", x.data.main.temp_min, x.data.main.temp_max, unit)
-                .. string.format("Humidity:    %s%%\n", x.data.main.humidity)
-                .. string.format("Pressure:    %shPa\n", x.data.main.pressure)
-                .. string.format("Clouds:      %s%%\n", x.data.clouds.all)
-                .. string.format("Wind:        %sm/s (%s)\n\n", x.data.wind.speed, cardinal_direction(x.data.wind.deg))
-                .. string.format("Sunrise:     %s\n", os.date("%H:%M", x.data.sys.sunrise))
-                .. string.format("Sunset:      %s", os.date("%H:%M", x.data.sys.sunset)),
+            text = table.concat {
+                string.format("%s <i>(%s)</i>\n\n", x.data.weather[1].main, x.data.weather[1].description),
+                string.format("Temperature: %s%s\n", x.data.main.temp, unit),
+                string.format("             %s%s to %s%s\n\n", x.data.main.temp_min, unit, x.data.main.temp_max, unit),
+                string.format("Humidity:    %s%%\n", x.data.main.humidity),
+                string.format("Pressure:    %shPa\n", x.data.main.pressure),
+                string.format("Clouds:      %s%%\n", x.data.clouds.all),
+                string.format("Wind:        %sm/s (%s)\n\n", x.data.wind.speed, cardinal_direction(x.data.wind.deg)),
+                string.format("Sunrise:     %s\n", os.date("%H:%M", x.data.sys.sunrise)),
+                string.format("Sunset:      %s", os.date("%H:%M", x.data.sys.sunset)),
+            },
         }
     end)
 
