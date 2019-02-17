@@ -63,9 +63,10 @@ local function factory(commands)
     --  public  --
     --------------
 
-    function broker:update()
+    function broker:update(callback)
         local context = { }
         context._auto = true
+        context._callback = callback
         self:_update(context)
     end
 
