@@ -27,7 +27,6 @@ local function factory(args)
     commands                    = gears.table.crush(commands, args.commands or { })
 
     local broker                = require("yaawl.broker")(commands)
-    local last_muted            = false
 
     function broker:_update(context)
         awful.spawn.easy_async(command,
@@ -35,8 +34,6 @@ local function factory(args)
                 local l, s = string.match(stdout, "(%d+)%%.*%[(%l*)%]")
                 context.percent = tonumber(l)
                 context.muted = s == "off"
-                context.last_muted, last_muted = last_muted, context.muted
-                context.text = context.muted and "Muted" or context.percent .. "%"
                 self:_apply(context)
             end
         )

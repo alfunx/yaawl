@@ -27,7 +27,6 @@ local function factory(args)
     function broker:_update(context)
         awful.spawn.easy_async(command,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                context.text = math.floor(stdout) .. "%"
                 context.percent = math.floor(stdout)
                 self:_apply(context)
             end
