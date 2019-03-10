@@ -34,10 +34,10 @@ local function factory(args)
     local notification_title    = args.notification_timeout or "Drive"
     local _notification         = nil
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
     local units                 = { "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" }
 
-    function broker:_update(context)
+    function subject:_update(context)
         local notifytable = { string.format("<i>%-10s %-5s %s\t%s\t</i>", "path", "used", "free", "size") }
         local pathlen = 10
 
@@ -86,7 +86,7 @@ local function factory(args)
         self:_apply(context)
     end
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if x._auto then return end
 
         naughty.destroy(_notification)
@@ -99,7 +99,7 @@ local function factory(args)
         }
     end)
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if not partition or x.percent < threshold or not notify then return end
 
         naughty.destroy(_notification)
@@ -116,14 +116,14 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

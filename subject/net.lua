@@ -28,11 +28,11 @@ local function factory(args)
         end
     end
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
     local _last_t               = 0
     local _last_r               = 0
 
-    function broker:_update(context)
+    function subject:_update(context)
         local now_t = tonumber(file.first_line(string.format("/sys/class/net/%s/statistics/tx_bytes", iface)) or 0)
         local now_r = tonumber(file.first_line(string.format("/sys/class/net/%s/statistics/rx_bytes", iface)) or 0)
 
@@ -63,16 +63,16 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    broker.timer = broker:add_timer { timeout = timeout }
-    broker.add_timer = nil
-    return broker
+    subject:update()
+    subject.timer = subject:add_timer { timeout = timeout }
+    subject.add_timer = nil
+    return subject
 
 end
 

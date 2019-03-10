@@ -45,9 +45,9 @@ local function factory(args)
         ac       = ps_path .. ac      .. "/online",
     }
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
 
-    function broker:_update(context)
+    function subject:_update(context)
         local t = file.first_line(files)
 
         context.percent = tonumber(t.capacity) or "N/A"
@@ -61,7 +61,7 @@ local function factory(args)
         self:_apply(context)
     end
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if x._auto and (not notify or x.percent > critical) then return end
 
         awful.spawn.easy_async_with_shell("acpi | grep -Po 'Battery 0: \\K.*'", function(stdout)
@@ -80,14 +80,14 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

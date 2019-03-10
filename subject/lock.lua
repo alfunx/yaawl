@@ -23,11 +23,11 @@ local function factory(args)
     local notification_title    = args.notification_timeout or "Lock"
     local _notification         = nil
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
     local enabled               = true
     local manual                = false
 
-    function broker:_update(context)
+    function subject:_update(context)
         awful.spawn.easy_async(command,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused
                 context.enabled = tonumber(string.match(stdout, "timeout:%s*(%d+)")) ~= 0
@@ -53,21 +53,21 @@ local function factory(args)
     --  functions  --
     -----------------
 
-    function broker:on(m)
+    function subject:on(m)
         if manual and not m then return end
         manual = false
         if enabled then return end
         awful.spawn.easy_async_with_shell(on, function() self:update() end)
     end
 
-    function broker:off(m)
+    function subject:off(m)
         if manual and not m then return end
         manual = m and true
         if not enabled then return end
         awful.spawn.easy_async_with_shell(off, function() self:update() end)
     end
 
-    function broker:lock()
+    function subject:lock()
         awful.spawn.easy_async_with_shell(lock, function() self:update() end)
     end
 
@@ -75,9 +75,9 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            if enabled then broker:off(true) else broker:on(true) end
+            if enabled then subject:off(true) else subject:on(true) end
         end)
     )
 
@@ -88,29 +88,29 @@ local function factory(args)
     if signals then
         client.connect_signal("focus", function(c)
             if c.fullscreen then
-                broker:off()
+                subject:off()
             else
-                broker:on()
+                subject:on()
             end
         end)
 
         client.connect_signal("property::fullscreen", function(c)
             if c.fullscreen then
-                broker:off()
+                subject:off()
             else
-                broker:on()
+                subject:on()
             end
         end)
 
         screen.connect_signal(("tag::history::update"), function()
             if not client.focused then
-                broker:on()
+                subject:on()
             end
         end)
     end
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

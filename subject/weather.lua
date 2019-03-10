@@ -40,12 +40,12 @@ local function factory(args)
     local notification_title    = args.notification_timeout or "Weather"
     local _notification         = nil
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
     local _ts                   = "/tmp/awesomewm-yaawl-weather-ts"
     local _data                 = "/tmp/awesomewm-yaawl-weather-data"
     local _last                 = nil
 
-    function broker:_update(context)
+    function subject:_update(context)
         if file.exists(_ts) and tonumber(file.first_line(_ts)) + timeout > os.time() then
             if not _last and file.exists(_data) then
                 _last = json.decode(file.first_line(_data))
@@ -77,7 +77,7 @@ local function factory(args)
         )
     end
 
-    function broker:is_error()
+    function subject:is_error()
         return not _last or _last.cod ~= 200
     end
 
@@ -109,7 +109,7 @@ local function factory(args)
         end
     end
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if x._auto then return end
 
         naughty.destroy(_notification)
@@ -136,14 +136,14 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

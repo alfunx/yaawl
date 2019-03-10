@@ -23,15 +23,15 @@ local function factory(args)
     local notification_title    = args.notification_timeout or "Temperature"
     local _notification         = nil
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
 
-    function broker:_update(context)
+    function subject:_update(context)
         local line = file.first_line(temp_path)
         context.temp = tonumber(line) / 1000
         self:_apply(context)
     end
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if x._auto then return end
 
         naughty.destroy(_notification)
@@ -48,14 +48,14 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

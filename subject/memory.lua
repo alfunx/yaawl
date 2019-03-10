@@ -22,9 +22,9 @@ local function factory(args)
     local notification_title    = args.notification_timeout or "Memory"
     local _notification         = nil
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
 
-    function broker:_update(context)
+    function subject:_update(context)
         for line in io.lines(mem_path) do
             for k, v in string.gmatch(line, "([%a]+):[%s]+([%d]+).+") do
                 if     k == "MemTotal"     then context.total = math.floor(v / 1024 + 0.5)
@@ -45,7 +45,7 @@ local function factory(args)
         self:_apply(context)
     end
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if x._auto then return end
 
         naughty.destroy(_notification)
@@ -71,14 +71,14 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

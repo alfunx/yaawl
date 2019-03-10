@@ -26,9 +26,9 @@ local function factory(args)
     commands.off                = string.format("amixer -q set %s mute", channel)
     commands                    = gears.table.crush(commands, args.commands or { })
 
-    local broker                = require("yaawl.broker")(commands)
+    local subject               = require("yaawl.subject")(commands)
 
-    function broker:_update(context)
+    function subject:_update(context)
         awful.spawn.easy_async(command,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused
                 local l, s = string.match(stdout, "(%d+)%%.*%[(%l*)%]")
@@ -43,32 +43,32 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:toggle()
+            subject:toggle()
         end),
         awful.button({                    }, 4, function()
-            broker:decrease()
+            subject:decrease()
         end),
         awful.button({                    }, 5, function()
-            broker:increase()
+            subject:increase()
         end),
         awful.button({ "Control"          }, 4, function()
-            broker:set_min()
+            subject:set_min()
         end),
         awful.button({ "Control"          }, 5, function()
-            broker:set_max()
+            subject:set_max()
         end),
         awful.button({ "Control"          }, 1, function()
-            broker:off()
+            subject:off()
         end),
         awful.button({ "Control"          }, 3, function()
-            broker:on()
+            subject:on()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

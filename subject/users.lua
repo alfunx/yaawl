@@ -21,9 +21,9 @@ local function factory(args)
     local notification_title    = args.notification_title or "Users"
     local _notification         = nil
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
 
-    function broker:_update(context)
+    function subject:_update(context)
         awful.spawn.easy_async(command,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused
                 context.users = gears.string.split(stdout, ' ')
@@ -34,7 +34,7 @@ local function factory(args)
         )
     end
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if x._auto and (not notify or x.count <= 1) then return end
 
         naughty.destroy(_notification)
@@ -51,14 +51,14 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

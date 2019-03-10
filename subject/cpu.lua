@@ -24,10 +24,10 @@ local function factory(args)
     local notification_title    = args.notification_timeout or "CPU"
     local _notification         = nil
 
-    local broker                = require("yaawl.broker")()
+    local subject               = require("yaawl.subject")()
     local _core                 = { }
 
-    function broker:_update(context)
+    function subject:_update(context)
         local lines = file.lines_match(cpu_path, "^cpu")
         for i, line in ipairs(lines) do
             local core   = _core[i - 1] or { _active = 0 , _total = 0, percent = 0 }
@@ -75,7 +75,7 @@ local function factory(args)
         return table.concat(lines, '\n'):gsub('[\r\n%s]*$', '')
     end
 
-    broker:add_callback(function(x)
+    subject:add_callback(function(x)
         if x._auto then return end
 
         naughty.destroy(_notification)
@@ -92,14 +92,14 @@ local function factory(args)
     --  buttons  --
     ---------------
 
-    broker.buttons = gears.table.join(
+    subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            broker:show()
+            subject:show()
         end)
     )
 
-    broker:update()
-    return broker
+    subject:update()
+    return subject
 
 end
 

@@ -8,19 +8,19 @@
 
 local yaawl = {
 
-    audio = require("yaawl.brokers.audio"),
-    battery = require("yaawl.brokers.battery"),
-    brightness = require("yaawl.brokers.brightness"),
-    cpu = require("yaawl.brokers.cpu"),
-    drive = require("yaawl.brokers.drive"),
-    loadavg = require("yaawl.brokers.loadavg"),
-    lock = require("yaawl.brokers.lock"),
-    memory = require("yaawl.brokers.memory"),
-    net = require("yaawl.brokers.net"),
-    temperature = require("yaawl.brokers.temperature"),
-    updates = require("yaawl.brokers.updates"),
-    users = require("yaawl.brokers.users"),
-    weather = require("yaawl.brokers.weather"),
+    audio = require("yaawl.subject.audio"),
+    battery = require("yaawl.subject.battery"),
+    brightness = require("yaawl.subject.brightness"),
+    cpu = require("yaawl.subject.cpu"),
+    drive = require("yaawl.subject.drive"),
+    loadavg = require("yaawl.subject.loadavg"),
+    lock = require("yaawl.subject.lock"),
+    memory = require("yaawl.subject.memory"),
+    net = require("yaawl.subject.net"),
+    temperature = require("yaawl.subject.temperature"),
+    updates = require("yaawl.subject.updates"),
+    users = require("yaawl.subject.users"),
+    weather = require("yaawl.subject.weather"),
 
 }
 

@@ -15,18 +15,18 @@
 
     Override following functions:
 
-    * broker:_update(context)
+    * subject:_update(context)
 
         This is the main update function. Calculate the needed values and assign
-        them to the table `broker.context`. The table `context` must be passed
-        to `broker:_apply()` after the values that should be available to the
+        them to the table `subject.context`. The table `context` must be passed
+        to `subject:_apply()` after the values that should be available to the
         client have been assigned to it.
 
     * commands
 
         The required commands must be passed as an array in the `commands`
-        table. Defined commands will be mapped to methods of the broker object.
-        When calling any of those methods, the broker will, as a side effect,
+        table. Defined commands will be mapped to methods of the subject object.
+        When calling any of those methods, the subject will, as a side effect,
         trigger an update and thus call all registered callbacks.
 
 --]]
@@ -38,10 +38,10 @@ local function factory(commands)
 
     commands                    = commands or { }
 
-    local broker                = { }
-    broker.show_popup           = function() end
-    broker.callbacks            = { }
-    broker._notification        = nil
+    local subject                = { }
+    subject.callbacks            = { }
+    subject.show_popup           = function() end
+    subject._notification        = nil
 
     local increase    = commands.increase or nil
     local decrease    = commands.decrease or nil
@@ -55,7 +55,7 @@ local function factory(commands)
     --  override  --
     ----------------
 
-    function broker:_update(context) --luacheck: no unused
+    function subject:_update(context) --luacheck: no unused
         -- override
     end
 
@@ -63,22 +63,22 @@ local function factory(commands)
     --  public  --
     --------------
 
-    function broker:update(callback)
+    function subject:update(callback)
         local context = { }
         context._auto = true
         context._callback = callback
         self:_update(context)
     end
 
-    function broker:show(callback)
+    function subject:show(callback)
         local context = { }
         context._auto = false
         context._callback = callback
         self:_update(context)
     end
 
-    function broker:add_timer(timer_args)
-        return gears.timer (gears.table.crush({
+    function subject:add_timer(timer_args)
+        return gears.timer(gears.table.crush({
             autostart = true,
             callback = function()
                 self:update()
@@ -86,12 +86,12 @@ local function factory(commands)
         }, timer_args))
     end
 
-    function broker:add_callback(callback)
+    function subject:add_callback(callback)
         table.insert(self.callbacks, callback)
         return callback
     end
 
-    function broker:remove_callback(callback)
+    function subject:remove_callback(callback)
         for i, c in ipairs(self.callbacks) do
             if c == callback then
                 table.remove(self.callbacks, i)
@@ -101,7 +101,7 @@ local function factory(commands)
         return nil
     end
 
-    function broker:set_popup(popup_function)
+    function subject:set_popup(popup_function)
         self.show_popup = popup_function
     end
 
@@ -109,7 +109,7 @@ local function factory(commands)
     --  private  --
     ---------------
 
-    function broker:_apply(context)
+    function subject:_apply(context)
         for _, c in pairs(self.callbacks) do
             c(context)
         end
@@ -124,7 +124,7 @@ local function factory(commands)
     -----------------
 
     if increase then
-        function broker:increase()
+        function subject:increase()
             awful.spawn.easy_async(increase,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused args
                 self:update()
@@ -134,7 +134,7 @@ local function factory(commands)
     end
 
     if decrease then
-        function broker:decrease()
+        function subject:decrease()
             awful.spawn.easy_async(decrease,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused args
                 self:update()
@@ -144,7 +144,7 @@ local function factory(commands)
     end
 
     if set_min then
-        function broker:set_min()
+        function subject:set_min()
             awful.spawn.easy_async(set_min,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused args
                 self:update()
@@ -154,7 +154,7 @@ local function factory(commands)
     end
 
     if set_max then
-        function broker:set_max()
+        function subject:set_max()
             awful.spawn.easy_async(set_max,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused args
                 self:update()
@@ -164,7 +164,7 @@ local function factory(commands)
     end
 
     if toggle then
-        function broker:toggle()
+        function subject:toggle()
             awful.spawn.easy_async(toggle,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused args
                 self:update()
@@ -174,7 +174,7 @@ local function factory(commands)
     end
 
     if on then
-        function broker:on()
+        function subject:on()
             awful.spawn.easy_async(on,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused args
                 self:update()
@@ -184,7 +184,7 @@ local function factory(commands)
     end
 
     if off then
-        function broker:off()
+        function subject:off()
             awful.spawn.easy_async(off,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused args
                 self:update()
@@ -197,7 +197,7 @@ local function factory(commands)
     --  end  --
     -----------
 
-    return broker
+    return subject
 
 end
 
