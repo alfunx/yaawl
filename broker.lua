@@ -110,7 +110,7 @@ local function factory(commands)
     ---------------
 
     function broker:_apply(context)
-        for _, c in ipairs(self.callbacks) do
+        for _, c in pairs(self.callbacks) do
             c(context)
         end
 

@@ -41,7 +41,7 @@ local function factory(args)
         local notifytable = { string.format("<i>%-10s %-5s %s\t%s\t</i>", "path", "used", "free", "size") }
         local pathlen = 10
 
-        for _, mount in ipairs(gio.unix_mounts_get()) do
+        for _, mount in pairs(gio.unix_mounts_get()) do
             local path = gio.unix_mount_get_mount_path(mount)
             local root = gio.File.new_for_path(path)
             local info = root:query_filesystem_info(query)
