@@ -13,17 +13,16 @@ local function factory(args)
 
     args                        = args or { }
     local step                  = args.step or 1
-    local channel               = args.channel or "Master"
 
-    local command               = string.format("amixer get %s", channel)
+    local command               = string.format("pulsemixer --get-volume --get-mute")
     local commands              = { }
-    commands.increase           = string.format("amixer -q set %s %d%%+", channel, step)
-    commands.decrease           = string.format("amixer -q set %s %d%%-", channel, step)
-    commands.set_min            = string.format("amixer -q set %s 0%%", channel)
-    commands.set_max            = string.format("amixer -q set %s 100%%", channel)
-    commands.toggle             = string.format("amixer -q set %s toggle", channel)
-    commands.on                 = string.format("amixer -q set %s unmute", channel)
-    commands.off                = string.format("amixer -q set %s mute", channel)
+    commands.increase           = string.format("pulsemixer --change-volume +%d", step)
+    commands.decrease           = string.format("pulsemixer --change-volume -%d", step)
+    commands.set_min            = string.format("pulsemixer --set-volume 0")
+    commands.set_max            = string.format("pulsemixer --set-volume 100")
+    commands.toggle             = string.format("pulsemixer --toggle-mute")
+    commands.on                 = string.format("pulsemixer --unmute")
+    commands.off                = string.format("pulsemixer --mute")
     commands                    = gears.table.crush(commands, args.commands or { })
 
     local subject               = require("yaawl.subject")(commands)
@@ -31,9 +30,9 @@ local function factory(args)
     function subject:_update(context)
         awful.spawn.easy_async(command,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                local l, s = string.match(stdout, "(%d+)%%.*%[(%l*)%]")
-                context.percent = tonumber(l)
-                context.muted = s == "off"
+                local l, r, s = string.match(stdout, "(%d+) (%d+)%c(%d)")
+                context.percent = math.floor((l + r) / 2)
+                context.muted = s == "1"
                 self:_apply(context)
             end
         )
