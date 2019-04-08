@@ -42,6 +42,7 @@ local function factory(args)
 
     args                        = args or { }
     local critical              = args.critical or 10
+    local subscribe             = args.subscribe or true
 
     local notify                = args.notify or false
     local preset                = args.preset or naughty.config.presets.normal
@@ -91,6 +92,14 @@ local function factory(args)
             text = table.concat(text),
         }
     end)
+
+    -- Subscribe to notification
+    if subscribe then
+        device.on_notify = function(d)
+            device = d
+            subject:update()
+        end
+    end
 
     ---------------
     --  buttons  --
