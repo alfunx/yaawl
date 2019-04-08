@@ -11,12 +11,12 @@
 local awful = require("awful")
 local gears = require("gears")
 local naughty = require("naughty")
-local file = require("yaawl.util.file")
+
+local gtop = require("lgi").GTop
 
 local function factory(args)
 
     args                        = args or { }
-    local sl_path               = args.sl_path or "/proc/loadavg"
 
     local preset                = args.preset or naughty.config.presets.normal
     local notification_timeout  = args.notification_timeout or 10
@@ -24,13 +24,13 @@ local function factory(args)
     local _notification         = nil
 
     local subject               = require("yaawl.subject")()
+    local struct                = gtop.glibtop_loadavg()
 
     function subject:_update(context)
-        local line = file.first_line(sl_path)
-        local a, b, c = string.match(line, "(%S+) (%S+) (%S+)")
-        context.load_1 = tonumber(a)
-        context.load_5 = tonumber(b)
-        context.load_15 = tonumber(c)
+        gtop.glibtop_get_loadavg(struct)
+        context.load_1 = tonumber(struct.loadavg[1])
+        context.load_5 = tonumber(struct.loadavg[2])
+        context.load_15 = tonumber(struct.loadavg[3])
         self:_apply(context)
     end
 
