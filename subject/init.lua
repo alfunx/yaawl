@@ -63,17 +63,15 @@ local function factory(commands)
     --  public  --
     --------------
 
-    function subject:update(callback)
-        local context = { }
+    function subject:update(context)
+        context = context or { }
         context._auto = true
-        context._callback = callback
         self:_update(context)
     end
 
-    function subject:show(callback)
-        local context = { }
+    function subject:show(context)
+        context = context or { }
         context._auto = false
-        context._callback = callback
         self:_update(context)
     end
 
@@ -114,8 +112,8 @@ local function factory(commands)
             c(context)
         end
 
-        if context._callback then
-            context._callback(context)
+        if context.callback then
+            context.callback(context)
         end
     end
 
