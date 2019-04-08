@@ -13,6 +13,7 @@ local function factory(args)
 
     args                        = args or { }
     local step                  = args.step or 1
+    local subscribe             = args.subscribe or true
 
     local command               = string.format("pulsemixer --get-volume --get-mute")
     local commands              = { }
@@ -36,6 +37,18 @@ local function factory(args)
                 self:_apply(context)
             end
         )
+    end
+
+    -- Subscribe to notification
+    if subscribe then
+        local subscribe_cmd = [[
+            sh -c 'pactl subscribe 2>/dev/null | grep --line-buffered "sink #[0-9]*"'
+        ]]
+        awful.spawn.with_line_callback(subscribe_cmd, {
+            stdout = function()
+                subject:update()
+            end
+        })
     end
 
     ---------------
