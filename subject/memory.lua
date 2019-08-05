@@ -12,10 +12,12 @@ local awful = require("awful")
 local gears = require("gears")
 local naughty = require("naughty")
 
+local gtop = require("lgi").GTop
+local unit = require("yaawl.util.unit")
+
 local function factory(args)
 
     args                        = args or { }
-    local mem_path              = args.mem_path or "/proc/meminfo"
 
     local preset                = args.preset or naughty.config.presets.normal
     local notification_timeout  = args.notification_timeout or 10
@@ -23,24 +25,25 @@ local function factory(args)
     local _notification         = nil
 
     local subject               = require("yaawl.subject")()
+    local struct                = gtop.glibtop_mem()
+    local struct_swap           = gtop.glibtop_swap()
 
     function subject:_update(context)
-        for line in io.lines(mem_path) do
-            for k, v in string.gmatch(line, "([%a]+):[%s]+([%d]+).+") do
-                if     k == "MemTotal"     then context.total = math.floor(v / 1024 + 0.5)
-                elseif k == "MemFree"      then context.free  = math.floor(v / 1024 + 0.5)
-                elseif k == "Buffers"      then context.buf   = math.floor(v / 1024 + 0.5)
-                elseif k == "Cached"       then context.cache = math.floor(v / 1024 + 0.5)
-                elseif k == "SwapTotal"    then context.swap  = math.floor(v / 1024 + 0.5)
-                elseif k == "SwapFree"     then context.swapf = math.floor(v / 1024 + 0.5)
-                elseif k == "SReclaimable" then context.srec  = math.floor(v / 1024 + 0.5)
-                end
-            end
-        end
+        gtop.glibtop_get_mem(struct)
+        gtop.glibtop_get_swap(struct_swap)
 
-        context.used = context.total - context.free - context.buf - context.cache - context.srec
-        context.swapused = context.swap - context.swapf
-        context.percent = math.floor(context.used / context.total * 100)
+        context.total  = struct.total
+        context.free   = struct.free
+        context.shared = struct.shared
+        context.buffer = struct.buffer
+        context.cached = struct.cached
+        context.user   = struct.user
+        context.locked = struct.locked
+        context.swap   = struct_swap
+
+        context.available = struct.total - struct.user
+        context.used      = struct.used - struct.buffer - struct.cached
+        context.percent   = math.floor(context.used / context.total * 100)
 
         self:_apply(context)
     end
@@ -55,14 +58,16 @@ local function factory(args)
             title = preset.title or notification_title,
             timeout = preset.timeout or notification_timeout,
             text = table.concat {
-                string.format("Total:  %.2fGB\n", x.total / 1024 + 0.5),
-                string.format("Used:   %.2fGB\n", x.used  / 1024 + 0.5),
-                string.format("Free:   %.2fGB\n", x.free  / 1024 + 0.5),
-                string.format("Buffer: %.2fGB\n", x.buf   / 1024 + 0.5),
-                string.format("Cache:  %.2fGB\n", x.cache / 1024 + 0.5),
-                string.format("Swap:   %.2fGB\n", x.swap  / 1024 + 0.5),
-                string.format("Swapf:  %.2fGB\n", x.swapf / 1024 + 0.5),
-                string.format("Srec:   %.2fGB"  , x.srec  / 1024 + 0.5),
+                string.format("Total:      %.2fGB\n",   unit.to_gb(x.total     )),
+                string.format("Used:       %.2fGB\n",   unit.to_gb(x.used      )),
+                string.format("Free:       %.2fGB\n",   unit.to_gb(x.free      )),
+                string.format("Available:  %.2fGB\n",   unit.to_gb(x.available )),
+                string.format("Shared:     %.2fGB\n",   unit.to_gb(x.shared    )),
+                string.format("Buffer:     %.2fGB\n",   unit.to_gb(x.buffer    )),
+                string.format("Cached:     %.2fGB\n\n", unit.to_gb(x.cached    )),
+                string.format("Swap Total: %.2fGB\n",   unit.to_gb(x.swap.total)),
+                string.format("Swap Used:  %.2fGB\n",   unit.to_gb(x.swap.used )),
+                string.format("Swap Free:  %.2fGB",     unit.to_gb(x.swap.free )),
             },
         }
     end)
