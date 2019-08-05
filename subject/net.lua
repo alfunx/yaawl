@@ -69,6 +69,10 @@ local function factory(args)
         end)
     )
 
+    ------------
+    --  init  --
+    ------------
+
     subject:update()
     subject.timer = subject:add_timer { timeout = timeout }
     subject.add_timer = nil

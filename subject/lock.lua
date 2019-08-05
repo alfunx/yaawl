@@ -109,6 +109,10 @@ local function factory(args)
         end)
     end
 
+    ------------
+    --  init  --
+    ------------
+
     subject:update()
     return subject
 
