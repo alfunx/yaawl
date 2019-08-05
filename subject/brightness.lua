@@ -39,7 +39,7 @@ local function factory(args)
 
     subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            subject:show_popup()
+            subject:show()
         end),
         awful.button({                    }, 4, function()
             subject:decrease()

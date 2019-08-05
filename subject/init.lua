@@ -40,7 +40,7 @@ local function factory(commands)
 
     local subject                = { }
     subject.callbacks            = { }
-    subject.show_popup           = function() end
+    subject.manual_callbacks     = { }
     subject._notification        = nil
 
     local increase    = commands.increase or nil
@@ -90,17 +90,22 @@ local function factory(commands)
     end
 
     function subject:remove_callback(callback)
-        for i, c in ipairs(self.callbacks) do
-            if c == callback then
-                table.remove(self.callbacks, i)
-                return c
-            end
-        end
-        return nil
+        local i = gears.table.find_first_key(self.callbacks, function(_, v)
+            return v == callback
+        end, true)
+        if i then table.remove(self.callbacks, i) end
     end
 
-    function subject:set_popup(popup_function)
-        self.show_popup = popup_function
+    function subject:add_manual_callback(callback)
+        table.insert(self.manual_callbacks, callback)
+        return callback
+    end
+
+    function subject:remove_manual_callback(callback)
+        local i = gears.table.find_first_key(self.manual_callbacks, function(_, v)
+            return v == callback
+        end, true)
+        if i then table.remove(self.manual_callbacks, i) end
     end
 
     ---------------
@@ -110,6 +115,12 @@ local function factory(commands)
     function subject:_apply(context)
         for _, c in pairs(self.callbacks) do
             c(context)
+        end
+
+        if not context._auto then
+            for _, c in pairs(self.manual_callbacks) do
+                c(context)
+            end
         end
 
         if context.callback then
@@ -124,9 +135,8 @@ local function factory(commands)
     if increase then
         function subject:increase()
             awful.spawn.easy_async(increase,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused args
-                self:update()
-                self.show_popup()
+            function(stdout, stderr, reason, exit_code) --luacheck: no unused
+                self:show()
             end)
         end
     end
@@ -134,9 +144,8 @@ local function factory(commands)
     if decrease then
         function subject:decrease()
             awful.spawn.easy_async(decrease,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused args
-                self:update()
-                self.show_popup()
+            function(stdout, stderr, reason, exit_code) --luacheck: no unused
+                self:show()
             end)
         end
     end
@@ -144,9 +153,8 @@ local function factory(commands)
     if set_min then
         function subject:set_min()
             awful.spawn.easy_async(set_min,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused args
-                self:update()
-                self.show_popup()
+            function(stdout, stderr, reason, exit_code) --luacheck: no unused
+                self:show()
             end)
         end
     end
@@ -154,9 +162,8 @@ local function factory(commands)
     if set_max then
         function subject:set_max()
             awful.spawn.easy_async(set_max,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused args
-                self:update()
-                self.show_popup()
+            function(stdout, stderr, reason, exit_code) --luacheck: no unused
+                self:show()
             end)
         end
     end
@@ -164,9 +171,8 @@ local function factory(commands)
     if toggle then
         function subject:toggle()
             awful.spawn.easy_async(toggle,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused args
-                self:update()
-                self.show_popup()
+            function(stdout, stderr, reason, exit_code) --luacheck: no unused
+                self:show()
             end)
         end
     end
@@ -174,9 +180,8 @@ local function factory(commands)
     if on then
         function subject:on()
             awful.spawn.easy_async(on,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused args
-                self:update()
-                self.show_popup()
+            function(stdout, stderr, reason, exit_code) --luacheck: no unused
+                self:show()
             end)
         end
     end
@@ -184,9 +189,8 @@ local function factory(commands)
     if off then
         function subject:off()
             awful.spawn.easy_async(off,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused args
-                self:update()
-                self.show_popup()
+            function(stdout, stderr, reason, exit_code) --luacheck: no unused
+                self:show()
             end)
         end
     end
