@@ -17,6 +17,7 @@ local yaawl = {
     lock = require("yaawl.subject.lock"),
     memory = require("yaawl.subject.memory"),
     net = require("yaawl.subject.net"),
+    ping = require("yaawl.subject.ping"),
     temperature = require("yaawl.subject.temperature"),
     updates = require("yaawl.subject.updates"),
     users = require("yaawl.subject.users"),
