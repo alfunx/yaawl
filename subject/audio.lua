@@ -32,8 +32,8 @@ local function factory(args)
     function subject:_update(context)
         awful.spawn.easy_async(command,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                local l, r, s = string.match(stdout, "(%d+) (%d+)%c(%d)")
-                context.percent = math.floor((l + r) / 2)
+                local l, r, s = stdout:match("(%d+) (%d+)%c(%d)")
+                context.percent = l and r and math.floor((l + r) / 2) or 0
                 context.muted = s == "1"
                 self:_apply(context)
             end

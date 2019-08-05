@@ -46,7 +46,8 @@ local function factory(args)
     local _last                 = nil
 
     function subject:_update(context)
-        if file.exists(_ts) and tonumber(file.first_line(_ts)) + timeout > os.time() then
+        local ts = file.exists(_ts) and tonumber(file.first_line(_ts)) or 0
+        if ts + timeout > os.time() then
             if not _last and file.exists(_data) then
                 _last = json.decode(file.first_line(_data))
             elseif not _last and not file.exists(_data) then

@@ -30,7 +30,7 @@ local function factory(args)
     function subject:_update(context)
         awful.spawn.easy_async(command,
             function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                context.enabled = tonumber(string.match(stdout, "timeout:%s*(%d+)")) ~= 0
+                context.enabled = tonumber(stdout:match("timeout:%s*(%d+)")) ~= 0
                 enabled = context.enabled
 
                 if exit_code ~= 0 or (stderr and stderr ~= "") then

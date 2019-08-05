@@ -24,7 +24,7 @@ local function factory(args)
         -- OK, since only executed for initialization
         local lines = gears.string.split(io.popen("ip link"):read("*all"), '\n')
         for _, line in ipairs(lines) do
-            iface = iface or (not string.match(line, "LOOPBACK") and string.match(line, "(%w+): <"))
+            iface = iface or (not line:match("LOOPBACK") and line:match(" (%w+): "))
         end
     end
 
@@ -45,15 +45,14 @@ local function factory(args)
         _last_t = now_t
         _last_r = now_r
 
-        if file.first_line(string.format("/sys/class/net/%s/uevent", iface)) == "DEVTYPE=wlan"
-                and string.match(context.carrier, "1") then
-            context.wifi   = true
-            context.signal = tonumber(string.match(file.lines("/proc/net/wireless")[3], "(%-%d+%.)")) or nil
-        end
-
-        if file.first_line(string.format("/sys/class/net/%s/uevent", iface)) ~= "DEVTYPE=wlan"
-                and string.match(context.carrier, "1") then
-            context.ethernet = true
+        local devtype = file.first_line(string.format("/sys/class/net/%s/uevent", iface)):match("DEVTYPE=(%a+)")
+        if context.carrier:match("1") then
+            if devtype == "wlan" then
+                context.wifi = true
+                context.signal = tonumber(file.lines("/proc/net/wireless")[3]:match("(%-%d+%.)")) or nil
+            else
+                context.ethernet = true
+            end
         end
 
         self:_apply(context)
