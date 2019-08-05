@@ -8,6 +8,7 @@
 
 local awful = require("awful")
 local gears = require("gears")
+local signal = require("yaawl.util.signal")
 
 local function factory(args)
 
@@ -49,6 +50,13 @@ local function factory(args)
                 subject:update()
             end
         })
+        signal.connect_once {
+            signal = "exit",
+            on = awesome, --luacheck: ignore
+            fn = function()
+                awful.spawn("pkill -f 'pactl subscribe'")
+            end,
+        }
     end
 
     ---------------

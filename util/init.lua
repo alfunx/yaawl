@@ -10,6 +10,7 @@ local utils = {
     json = require("yaawl.util.json-lua.json"),
     inspect = require("yaawl.util.inspect-lua.inspect"),
     file = require("yaawl.util.file"),
+    signal = require("yaawl.util.signal"),
     unit = require("yaawl.util.unit"),
     time = require("yaawl.util.time"),
 }
