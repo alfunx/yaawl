@@ -16,7 +16,7 @@ local file = require("yaawl.util.file")
 local function factory(args)
 
     args                        = args or { }
-    local temp_path             = args.temp_path or "/sys/class/thermal/thermal_zone0/temp"
+    local path                  = args.path or "/sys/class/thermal/thermal_zone0/temp"
 
     local preset                = args.preset or naughty.config.presets.normal
     local notification_timeout  = args.notification_timeout or nil
@@ -26,7 +26,7 @@ local function factory(args)
     local subject               = require("yaawl.subject")()
 
     function subject:_update(context)
-        local line = file.first_line(temp_path)
+        local line = file.first_line(path)
         context.temp = tonumber(line) / 1000
         self:_apply(context)
     end
