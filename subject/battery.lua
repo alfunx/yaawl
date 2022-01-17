@@ -56,7 +56,7 @@ local function factory(args)
         context.device = device
         context.const = const
 
-        context.percent = device.percentage or 0
+        context.percent = math.floor(device.percentage) or 0
         context.status = const.device_state[device.state]
         context.charging = context.status == "Charging"
         context.full = context.status == "Full"

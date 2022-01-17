@@ -20,6 +20,8 @@ local function factory(args)
     local commands              = { }
     commands.increase           = string.format("pulsemixer --change-volume +%d", step)
     commands.decrease           = string.format("pulsemixer --change-volume -%d", step)
+    commands.increase_10        = string.format("pulsemixer --change-volume +%d", step * 10)
+    commands.decrease_10        = string.format("pulsemixer --change-volume -%d", step * 10)
     commands.set_min            = string.format("pulsemixer --set-volume 0")
     commands.set_max            = string.format("pulsemixer --set-volume 100")
     commands.toggle             = string.format("pulsemixer --toggle-mute")
@@ -43,7 +45,7 @@ local function factory(args)
     -- Subscribe to notification
     if subscribe then
         local subscribe_cmd = [[
-            sh -c 'pactl subscribe 2>/dev/null | grep --line-buffered "sink #[0-9]*"'
+            sh -c 'pactl subscribe 2>/dev/null | grep --line-buffered "\(sink\|card\) #[0-9]*"'
         ]]
         awful.spawn.with_line_callback(subscribe_cmd, {
             stdout = function()

@@ -18,6 +18,8 @@ local function factory(args)
     local commands              = { }
     commands.increase           = string.format("light -A %d", step)
     commands.decrease           = string.format("light -U %d", step)
+    commands.increase_10        = string.format("light -A %d", step * 10)
+    commands.decrease_10        = string.format("light -U %d", step * 10)
     commands.set_min            = string.format("light -Sr 1")
     commands.set_max            = string.format("light -S 100")
     commands                    = gears.table.crush(commands, args.commands or { })

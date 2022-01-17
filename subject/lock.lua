@@ -25,7 +25,6 @@ local function factory(args)
 
     local subject               = require("yaawl.subject")()
     local enabled               = true
-    local manual                = false
 
     function subject:_update(context)
         awful.spawn.easy_async(command,
@@ -53,16 +52,12 @@ local function factory(args)
     --  functions  --
     -----------------
 
-    function subject:on(m)
-        if manual and not m then return end
-        manual = false
+    function subject:on()
         if enabled then return end
         awful.spawn.easy_async_with_shell(on, function() self:update() end)
     end
 
-    function subject:off(m)
-        if manual and not m then return end
-        manual = m and true
+    function subject:off()
         if not enabled then return end
         awful.spawn.easy_async_with_shell(off, function() self:update() end)
     end
@@ -77,37 +72,9 @@ local function factory(args)
 
     subject.buttons = gears.table.join(
         awful.button({                    }, 1, function()
-            if enabled then subject:off(true) else subject:on(true) end
+            if enabled then subject:off() else subject:on() end
         end)
     )
-
-    ---------------
-    --  signals  --
-    ---------------
-
-    if signals then
-        client.connect_signal("focus", function(c)
-            if c.fullscreen then
-                subject:off()
-            else
-                subject:on()
-            end
-        end)
-
-        client.connect_signal("property::fullscreen", function(c)
-            if c.fullscreen then
-                subject:off()
-            else
-                subject:on()
-            end
-        end)
-
-        screen.connect_signal(("tag::history::update"), function()
-            if not client.focused then
-                subject:on()
-            end
-        end)
-    end
 
     ------------
     --  init  --

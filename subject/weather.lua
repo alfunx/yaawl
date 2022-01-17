@@ -121,6 +121,7 @@ local function factory(args)
             timeout = preset.timeout or notification_timeout,
             text = table.concat {
                 string.format("%s <i>(%s)</i>\n\n", x.data.weather[1].main, x.data.weather[1].description),
+                string.format("Location:    %s (%s)\n\n", x.data.name, x.data.sys.country),
                 string.format("Temperature: %s%s\n", x.data.main.temp, unit),
                 string.format("             %s%s to %s%s\n\n", x.data.main.temp_min, unit, x.data.main.temp_max, unit),
                 string.format("Humidity:    %s%%\n", x.data.main.humidity),

@@ -45,6 +45,8 @@ local function factory(commands)
 
     local increase    = commands.increase or nil
     local decrease    = commands.decrease or nil
+    local increase_10 = commands.increase_10 or nil
+    local decrease_10 = commands.decrease_10 or nil
     local set_min     = commands.set_min or nil
     local set_max     = commands.set_max or nil
     local toggle      = commands.toggle or nil
@@ -132,66 +134,61 @@ local function factory(commands)
     --  functions  --
     -----------------
 
+    local show = function(stdout, stderr, reason, exit_code) --luacheck: no unused
+        subject:show()
+    end
+
     if increase then
         function subject:increase()
-            awful.spawn.easy_async(increase,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                self:show()
-            end)
+            awful.spawn.easy_async(increase, show)
         end
     end
 
     if decrease then
         function subject:decrease()
-            awful.spawn.easy_async(decrease,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                self:show()
-            end)
+            awful.spawn.easy_async(decrease, show)
+        end
+    end
+
+    if increase_10 then
+        function subject:increase_10()
+            awful.spawn.easy_async(increase_10, show)
+        end
+    end
+
+    if decrease_10 then
+        function subject:decrease_10()
+            awful.spawn.easy_async(decrease_10, show)
         end
     end
 
     if set_min then
         function subject:set_min()
-            awful.spawn.easy_async(set_min,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                self:show()
-            end)
+            awful.spawn.easy_async(set_min, show)
         end
     end
 
     if set_max then
         function subject:set_max()
-            awful.spawn.easy_async(set_max,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                self:show()
-            end)
+            awful.spawn.easy_async(set_max, show)
         end
     end
 
     if toggle then
         function subject:toggle()
-            awful.spawn.easy_async(toggle,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                self:show()
-            end)
+            awful.spawn.easy_async(toggle, show)
         end
     end
 
     if on then
         function subject:on()
-            awful.spawn.easy_async(on,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                self:show()
-            end)
+            awful.spawn.easy_async(on, show)
         end
     end
 
     if off then
         function subject:off()
-            awful.spawn.easy_async(off,
-            function(stdout, stderr, reason, exit_code) --luacheck: no unused
-                self:show()
-            end)
+            awful.spawn.easy_async(off, show)
         end
     end
 

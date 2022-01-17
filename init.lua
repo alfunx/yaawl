@@ -19,6 +19,7 @@ local yaawl = {
     net = require("yaawl.subject.net"),
     ping = require("yaawl.subject.ping"),
     temperature = require("yaawl.subject.temperature"),
+    udev = require("yaawl.subject.udev"),
     updates = require("yaawl.subject.updates"),
     users = require("yaawl.subject.users"),
     weather = require("yaawl.subject.weather"),
